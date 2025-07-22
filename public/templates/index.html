@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/icons8-nó-js-48.png" type="image/x-icon">
+    <title>Document</title>
+</head>
+<body>
+    <input type="file" name="input-json" id="input-json">
+    <button type="button" onclick="sendDocument()">Send</button>
+
+    <div id="linkDownload">
+
+    </div>
+    <script>
+
+        async function sendDocument(){
+            const file = document.getElementById("input-json").files[0];
+            console.log(file);
+            const formData = new FormData();
+            formData.append('single', file);
+
+            const res = await fetch('http://localhost:3000/convert/xml', {
+                method: 'POST',
+                body: formData
+            });
+
+            const json = await res.json();
+            console.log(json.data.dic.entry);
+            const jsonString = JSON.stringify(json, null, 2);
+
+            const blob = new Blob([jsonString], { type: 'application/json' });
+
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'json.json'
+            link.innerText = "teste";
+
+            document.getElementById("linkDownload").appendChild(link);
+        }
+
+    </script>
+</body>
+</html>
